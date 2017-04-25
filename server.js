@@ -12,24 +12,6 @@ var files = {};
 var port = 9000;
 var host = '127.0.0.1';
 
-if(debug){
-    db.each("SELECT rowid as id, * FROM levels", function(error, row){
-        console.log(row);
-    });
-    db.each("SELECT rowid as id, * FROM kai_disciplines", function(error, row){
-        console.log(row);
-    });
-    db.each("SELECT rowid as id, * FROM weapons", function(error, row){
-        console.log(row);
-    });
-}
-var sendError = function(message, code){
-    if(code === undefined){
-        code = 404;
-    }
-    res.writeHead(code, {'Content-Type':'text/html'});
-    res.end(message);
-}
 var assets = function(request, response){
     var content = "";
     var type = "";
@@ -37,16 +19,8 @@ var assets = function(request, response){
     if(request.url === '/'){
         content = fs.readFileSync('./index.html');
         type = 'text/html';
-    } else if (request.url === '/css/style.css'){
-        content = fs.readFileSync('./css/style.css');
-        type = 'text/css';
-    } else if (request.url === "/js/app.js"){
-        content = fs.readFileSync('./js/app.js');
-        type = 'text/javascript';
-    } else if (request.url === "/js/jquery.js"){
-        content = fs.readFileSync('./js/jquery.js');
-        type = 'text/javascript';
-    } else if (request.url === '/getLevels'){
+    }
+    else if (request.url === '/getLevels'){
         normalCall = false;
         type = 'application/json';
         db.all("SELECT rowid as id, * FROM levels", (error, rows)=>{
@@ -56,6 +30,17 @@ var assets = function(request, response){
             response.writeHead(200, {"Content-Type": type});
             response.end(content + "\n");
         });
+    }
+    else {
+        if(fs.existsSync("./public" + request.url)){
+            content = fs.readFileSync("./public" + request.url);
+            if(request.url.match(/.js/)) type = "text/javascript";
+            if(request.url.match(/.css/)) type = "text/css";
+            if(type == "") type = 'text/plain';
+        } else {
+            content = '{error: "No such file in directory"}';
+            type = "application/json";
+        }
     }
     if(normalCall){
         response.writeHead(200, {'Content-Type': type});
