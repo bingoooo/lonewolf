@@ -7,20 +7,19 @@ var db = new sqlite.Database('lonewolf.db');
 
 db.serialize(function(){
     db.run("CREATE TABLE if not exists users (username TEXT, password TEXT)");
-    db.run("CREATE TABLE if not exists book_1 (page INT, type TEXT, description DESC, choices TEXT, other TEXT)");
-    db.run("CREATE TABLE if not exists characters (userid INT, combat_skill INT, endurance INT)");
+    db.run("CREATE TABLE if not exists books (book INT, page INT, type TEXT, description TEXT, other TEXT)");
+    db.run("CREATE TABLE if not exists books_choices (book INT, page INT, book_choice INT, page_choice INT, condition TEXT, description TEXT)");
+    db.run("CREATE TABLE if not exists characters (userid INT, combat_skill INT, endurance INT, gold_crown INT)");
     db.run("CREATE TABLE if not exists levels (name TEXT)");
     db.run("CREATE TABLE if not exists kai_disciplines (name TEXT, effect_on_attribute TEXT, effect_modifier INT, effect_target TEXT)");
     db.run("CREATE TABLE if not exists weapons (name TEXT, modifier INT)");
-    db.run("CREATE TABLE if not exists armors (name TEXT, modifier INT, position INT)");
+    db.run("CREATE TABLE if not exists special_items (name TEXT, modifier INT, position TEXT)");
     db.run("CREATE TABLE if not exists items (name TEXT, effect_on_attribute TEXT, effect_modifier INT)");
-    db.run("CREATE TABLE if not exists special_items (name TEXT, effect_on_attribute TEXT, effect_modifier INT)");
-    db.run("CREATE TABLE if not exists characters_levels (charactersid INT, skillsid INT)");
-    db.run("CREATE TABLE if not exists characters_kai_disciplines (charactersid INT, skillsid INT)");
-    db.run("CREATE TABLE if not exists characters_weapons (charactersid INT, skillsid INT)");
-    db.run("CREATE TABLE if not exists characters_armors (charactersid INT, skillsid INT)");
-    db.run("CREATE TABLE if not exists characters_items (charactersid INT, skillsid INT)");
-    db.run("CREATE TABLE if not exists characters_special_items (charactersid INT, skillsid INT)");
+    db.run("CREATE TABLE if not exists characters_levels (characterid INT, levelid INT)");
+    db.run("CREATE TABLE if not exists characters_kai_disciplines (charactersid INT, disciplineid INT)");
+    db.run("CREATE TABLE if not exists characters_weapons (characterid INT, we aponid INT)");
+    db.run("CREATE TABLE if not exists characters_items (characterid INT, itemid INT)");
+    db.run("CREATE TABLE if not exists characters_special_items (characterid INT, )");
     db.run("CREATE TABLE if not exists weaponskill_weapon (characterid INT, weaponid INT)");
     var stmt = db.prepare("INSERT INTO levels VALUES (?)");
     stmt.run("Novice");
@@ -58,13 +57,29 @@ db.serialize(function(){
     stmt.run("Quarterstaff, null");
     stmt.run("Broadsword, null");
     stmt.finalize();
-    stmt = db.prepare("INSERT INTO armors VALUES (?,?,?)");
-    stmt.run("Helmet, 2, 1"); 
-    stmt.run("Chainmail , 2, 1");
+    stmt = db.prepare("INSERT INTO special_items VALUES (?,?,?)");
+    stmt.run("Helmet, 2, head"); 
+    stmt.run("Chainmail , 2, body");
     stmt.finalize();
     stmt = db.prepare("INSERT INTO items VALUES (?,?,?)");
-    stmt.run("Meal, 'endurance', 3")
+    stmt.run("Meal, 'endurance', 3");
+    stmt.run("'Healing Potion', 'endurance', 4");
     stmt.finalize();
+    stmt.prepare("INSERT INTO books VALUES (?,?,?,?,?,?)");
+    stmt.run("1, 1, adventure, "
+        +"'You must make haste for you sense it is not safe to linger by the smoking remains of the ruined monastery."
+        +"', ");
+    stmt.finalize();
+    stmt.prepare("INSERT INTO books_choices VALUES (?,?,?,?,?)");
+    stmt.run("1,1,1,85, null, 'If you wish to take the right path into the wood...'");
+    stmt.run("1,1,1,141, 'kai_discipline:Sixth Sense', 'If you wish to use the Kai Discipline of Sixth Sense...'");
+    stmt.run("1,1,1,275, null, 'If you wish to follow the left track'");
+    stmt.run("1,2,1,276, 'random : 5-9', 'random'");
+    stmt.run("1,2,1,343, 'random : 0-4', 'random'");
+    stmt.run("1,3,1,196, null");
+    stmt.run("1,3,1,144, null");
+    stmt.run("1,4,1,218, 'kai_discipline:Sixth Sense'");
+    stmt.run("1,4,1,75, null");
     db.each("SELECT rowid as id, * FROM levels", function(error, row){
         console.log(row);
     });
