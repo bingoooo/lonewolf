@@ -71,15 +71,19 @@ db.serialize(function(){
         +"', ");
     stmt.finalize();
     stmt.prepare("INSERT INTO books_choices VALUES (?,?,?,?,?)");
-    stmt.run("1,1,1,85, null, 'If you wish to take the right path into the wood...'");
-    stmt.run("1,1,1,141, 'kai_discipline:Sixth Sense', 'If you wish to use the Kai Discipline of Sixth Sense...'");
+    stmt.run("1,1,1,85, null, 'If you wish to take the right path into the wood'");
+    stmt.run("1,1,1,141, 'kai_discipline:Sixth Sense', 'If you wish to use the Kai Discipline of Sixth Sense'");
     stmt.run("1,1,1,275, null, 'If you wish to follow the left track'");
-    stmt.run("1,2,1,276, 'random : 5-9', 'random'");
-    stmt.run("1,2,1,343, 'random : 0-4', 'random'");
-    stmt.run("1,3,1,196, null");
-    stmt.run("1,3,1,144, null");
-    stmt.run("1,4,1,218, 'kai_discipline:Sixth Sense'");
-    stmt.run("1,4,1,75, null");
+    stmt.run("1,2,1,276, 'random : 5-9', null");
+    stmt.run("1,2,1,343, 'random : 0-4', null");
+    stmt.run("1,3,1,196, null, 'If you wish to follow this man'");
+    stmt.run("1,3,1,144, null, 'If you wish to decline his offer and return to the crowded streets'");
+    stmt.run("1,4,1,218, 'kai_discipline:Sixth Sense', 'If you wish to use the Kai Discipline of Sixth Sense'");
+    stmt.run("1,4,1,75, null, 'If you wish to hide in the bottom of the canoe'");
+    stmt.run("1,4,1,175, null, 'If you wish to attract their atention'");
+    stmt.run("1,5,1,111, null, 'Continue'");
+    stmt.run("1,6,1,111, null, 'If you wish to call them'");
+    stmt.run("1,6,1,111, null, 'If you wish to let them pass and then continue on your way through the forest'");
     db.each("SELECT rowid as id, * FROM levels", function(error, row){
         console.log(row);
     });
